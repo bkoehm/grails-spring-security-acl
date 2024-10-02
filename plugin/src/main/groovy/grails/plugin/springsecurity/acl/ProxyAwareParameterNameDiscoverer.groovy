@@ -16,7 +16,7 @@ package grails.plugin.springsecurity.acl
 
 import grails.plugin.springsecurity.acl.util.ProxyUtils
 import groovy.transform.CompileStatic
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer
+import org.springframework.core.DefaultParameterNameDiscoverer
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
@@ -28,7 +28,7 @@ import java.lang.reflect.Method
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 @CompileStatic
-class ProxyAwareParameterNameDiscoverer extends LocalVariableTableParameterNameDiscoverer {
+class ProxyAwareParameterNameDiscoverer extends DefaultParameterNameDiscoverer {
 
 	@Override
 	String[] getParameterNames(Method method) {
