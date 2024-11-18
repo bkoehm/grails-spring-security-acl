@@ -58,9 +58,6 @@ dependencies {
     api "org.springframework.security:spring-security-acl:$springSecurityVersion"
 }
 
-//apply from: "${rootProject.projectDir}/gradle/artifactoryPublish.gradle"
-//apply from: "${rootProject.projectDir}/gradle/grailsPublish.gradle"
-
 publishing {
     publications {
         maven(MavenPublication) {
