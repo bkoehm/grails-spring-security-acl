@@ -177,7 +177,7 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		aclCache(SpringAclCacheFactoryBean) {
 			cacheManager = ref('aclCacheManager')
 			cacheName = 'aclCache'
-			aclPermissionGrantingStrategy = ref('aclPermissionGrantingStrategy')
+			permissionGrantingStrategy = ref('aclPermissionGrantingStrategy')
 			aclAuthorizationStrategy = ref('aclAuthorizationStrategy')
 		}
 
@@ -211,8 +211,6 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 
 	private configureExpressionBeans = { conf ->
 
-		parameterNameDiscoverer(ProxyAwareParameterNameDiscoverer)
-
 		permissionEvaluator(AclPermissionEvaluator, ref('aclService')) {
 			objectIdentityRetrievalStrategy = ref('objectIdentityRetrievalStrategy')
 			objectIdentityGenerator = ref('objectIdentityRetrievalStrategy')
@@ -228,7 +226,6 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		}
 
 		expressionHandler(DefaultMethodSecurityExpressionHandler) {
-			parameterNameDiscoverer = ref('parameterNameDiscoverer')
 			permissionCacheOptimizer = ref('aclPermissionCacheOptimizer')
 			expressionParser = ref('expressionParser')
 			roleHierarchy = ref('roleHierarchy')

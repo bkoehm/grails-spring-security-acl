@@ -24,4 +24,8 @@ class User implements Serializable {
 		username blank: false, unique: true
 		password blank: false
 	}
+
+	static mapping = {
+		table name: '`user`'
+	}
 }

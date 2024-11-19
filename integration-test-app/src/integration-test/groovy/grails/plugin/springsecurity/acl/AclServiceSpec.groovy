@@ -15,7 +15,7 @@
 package grails.plugin.springsecurity.acl
 
 import grails.gorm.transactions.Rollback
-import net.sf.ehcache.Ehcache
+import org.springframework.cache.CacheManager
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.domain.CumulativePermission
 import org.springframework.security.acls.domain.GrantedAuthoritySid
@@ -55,14 +55,14 @@ class AclServiceSpec extends AbstractIntegrationSpec {
 
 	AclCache aclCache
 	AclService aclService
-	Ehcache ehcacheAclCache
+	CacheManager aclCacheManager
 
 	void setup() {
 		principalSid = new PrincipalSid(authenticate('ben', 'ROLE_ADMIN'))
 	}
 
 	void cleanup() {
-		ehcacheAclCache.removeAll()
+		aclCacheManager.getCache("aclCache").clear()
 	}
 
 	void 'test lifecycle'() {

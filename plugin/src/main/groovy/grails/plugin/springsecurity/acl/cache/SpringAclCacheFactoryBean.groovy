@@ -55,8 +55,8 @@ class SpringAclCacheFactoryBean implements FactoryBean<SpringCacheBasedAclCache>
         Assert.notNull(permissionGrantingStrategy, "permissionGrantingStrategy is required")
         Assert.notNull(aclAuthorizationStrategy, "aclAuthorizationStrategy is required")
         if (!cacheConfig) {
-            cacheConfig = new MutableConfiguration<String, MutableAcl>()
-                    .setTypes(String, MutableAcl)
+            cacheConfig = new MutableConfiguration<Object, MutableAcl>()
+                    .setTypes(Object, MutableAcl)
                     .setStoreByValue(false)
         }
         springAclCache = new SpringCacheBasedAclCache(

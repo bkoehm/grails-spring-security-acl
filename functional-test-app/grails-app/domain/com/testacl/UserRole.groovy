@@ -2,7 +2,8 @@ package com.testacl
 
 import grails.gorm.DetachedCriteria
 import groovy.transform.ToString
-import org.apache.commons.lang.builder.HashCodeBuilder
+import org.apache.commons.lang3.builder.HashCodeBuilder
+import org.hibernate.ObjectNotFoundException
 
 @ToString(cache=true, includeNames=true, includePackage=false)
 class UserRole implements Serializable {
@@ -86,7 +87,11 @@ class UserRole implements Serializable {
 			if (ur.user == null || ur.user.id == null) return
 			boolean existing = false
 			UserRole.withNewSession {
-				existing = UserRole.exists(ur.user.id, r.id)
+				try {
+					existing = UserRole.exists(ur.user.id, r.id)
+				} catch (ObjectNotFoundException ignored) {
+					// no-op
+				}
 			}
 			if (existing) {
 				return 'userRole.exists'

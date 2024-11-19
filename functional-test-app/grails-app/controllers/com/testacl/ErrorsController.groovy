@@ -7,11 +7,6 @@ import groovy.transform.CompileStatic
 @Secured('permitAll')
 class ErrorsController {
 
-	def error403() {
-        // Line necessary due to: https://github.com/grails/grails-core/issues/10582
-		[view: 'error403']
-	}
-
 	def error404() {
 		String uri = 'request.forwardURI'
 		if (!uri.contains('favicon.ico')) {

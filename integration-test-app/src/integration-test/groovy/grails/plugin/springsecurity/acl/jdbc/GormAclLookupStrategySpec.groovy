@@ -20,7 +20,7 @@ import grails.plugin.springsecurity.acl.AclClass
 import grails.plugin.springsecurity.acl.AclEntry
 import grails.plugin.springsecurity.acl.AclObjectIdentity
 import grails.plugin.springsecurity.acl.AclSid
-import net.sf.ehcache.Ehcache
+import org.springframework.cache.CacheManager
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.domain.PrincipalSid
@@ -50,7 +50,7 @@ class GormAclLookupStrategySpec extends AbstractIntegrationSpec {
 	private AclObjectIdentity aclObjectIdentity
 
 	GormAclLookupStrategy aclLookupStrategy
-	Ehcache ehcacheAclCache
+	CacheManager aclCacheManager
 
 	void buildData() {
 
@@ -107,7 +107,7 @@ class GormAclLookupStrategySpec extends AbstractIntegrationSpec {
 	}
 
 	void cleanup() {
-		ehcacheAclCache.removeAll()
+		aclCacheManager.getCache("aclCache").clear()
 	}
 
 	void 'acls retrieval with default batch size'() {

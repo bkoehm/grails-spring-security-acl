@@ -8,6 +8,7 @@ import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.domain.PermissionFactory
 import org.springframework.security.acls.model.Permission
 import grails.gorm.transactions.Transactional
+import org.springframework.security.core.parameters.P
 
 class ReportService {
 
@@ -17,13 +18,13 @@ class ReportService {
 
 	@PreAuthorize('hasPermission(#report, admin)')
 	@Transactional
-	void addPermission(Report report, String username, int permission) {
+	void addPermission(@P("report") Report report, String username, int permission) {
 		addPermission report, username, aclPermissionFactory.buildFromMask(permission)
 	}
 
 	@PreAuthorize('hasPermission(#report, admin)')
 	@Transactional
-	void addPermission(Report report, String username, Permission permission) {
+	void addPermission(@P("report") Report report, String username, Permission permission) {
 		aclUtilService.addPermission report, username, permission
 	}
 
@@ -40,7 +41,7 @@ class ReportService {
 	}
 
 	@PreAuthorize('hasPermission(#id, "com.testacl.Report", read) or hasPermission(#id, "com.testacl.Report", admin)')
-	Report get(long id) {
+	Report get(@P("id") long id) {
 		Report.get id
 	}
 
@@ -56,13 +57,13 @@ class ReportService {
 
 	@Transactional
 	@PreAuthorize('hasPermission(#report, write) or hasPermission(#report, admin)')
-	void update(Report report, String name) {
+	void update(@P("report") Report report, String name) {
 		report.name = name
 	}
 
 	@Transactional
 	@PreAuthorize('hasPermission(#report, delete) or hasPermission(#report, admin)')
-	void delete(Report report) {
+	void delete(@P("report") Report report) {
 		report.delete()
 
 		// Delete the ACL information as well
