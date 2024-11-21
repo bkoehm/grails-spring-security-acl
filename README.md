@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/grails-plugins/grails-spring-security-acl.svg?branch=master)
-
 Grails Spring Security ACL Plugin
 ==================================
 

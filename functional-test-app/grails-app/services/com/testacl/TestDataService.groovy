@@ -9,6 +9,7 @@ import grails.plugin.springsecurity.acl.AclSid
 import grails.plugin.springsecurity.acl.AclUtilService
 import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
+import jakarta.annotation.PostConstruct
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -25,6 +26,11 @@ class TestDataService {
 	AclService aclService
 	AclUtilService aclUtilService
 	ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy
+
+	@PostConstruct
+	void init() {
+		reset()
+	}
 
 	void reset() {
 		deleteAll()

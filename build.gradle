@@ -1,0 +1,9 @@
+subprojects {
+    configurations.configureEach {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.seleniumhq.selenium') {
+                details.useVersion(seleniumVersion)
+            }
+        }
+    }
+}

@@ -16,8 +16,8 @@ package grails.plugin.springsecurity.acl
 
 import grails.plugin.springsecurity.BeanTypeResolver
 import grails.util.GrailsClassUtils as GCU
-import org.springframework.cache.ehcache.EhCacheFactoryBean
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean
+import grails.plugin.springsecurity.acl.cache.SpringAclCacheFactoryBean
+import org.springframework.cache.jcache.JCacheCacheManager
 import org.springframework.expression.spel.standard.SpelExpressionParser
 import org.springframework.security.access.annotation.SecuredAnnotationSecurityMetadataSource as SpringSecuredAnnotationSecurityMetadataSource
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler
@@ -41,7 +41,7 @@ import org.springframework.security.acls.domain.AclAuthorizationStrategyImpl
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.acls.domain.DefaultPermissionFactory
 import org.springframework.security.acls.domain.DefaultPermissionGrantingStrategy
-import org.springframework.security.acls.domain.EhCacheBasedAclCache
+import org.springframework.security.acls.domain.SpringCacheBasedAclCache
 import org.springframework.security.acls.domain.SidRetrievalStrategyImpl
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.AuthorityUtils
@@ -84,7 +84,7 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 	public static final String ENCODING_IDSHA256 = "SHA-256"
 
 
-	String grailsVersion = '3.0.0 > *'
+	String grailsVersion = '7.0.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'burt@burtbeckwith.com'
 	String title = 'Spring Security ACL plugin'
@@ -173,14 +173,13 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		objectIdentityRetrievalStrategy(GormObjectIdentityRetrievalStrategy)
 
 		// acl cache
-		aclCacheManager(EhCacheManagerFactoryBean) {
-			cacheManagerName = 'spring-security-acl-cache-' + UUID.randomUUID()
-		}
-		ehcacheAclCache(EhCacheFactoryBean) {
+		aclCacheManager(JCacheCacheManager)
+		aclCache(SpringAclCacheFactoryBean) {
 			cacheManager = ref('aclCacheManager')
 			cacheName = 'aclCache'
+			permissionGrantingStrategy = ref('aclPermissionGrantingStrategy')
+			aclAuthorizationStrategy = ref('aclAuthorizationStrategy')
 		}
-		aclCache(EhCacheBasedAclCache, ref('ehcacheAclCache'), ref('aclPermissionGrantingStrategy'), ref('aclAuthorizationStrategy'))
 
 		aclPermissionGrantingStrategy(DefaultPermissionGrantingStrategy, ref('aclAuditLogger'))
 
@@ -212,8 +211,6 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 
 	private configureExpressionBeans = { conf ->
 
-		parameterNameDiscoverer(ProxyAwareParameterNameDiscoverer)
-
 		permissionEvaluator(AclPermissionEvaluator, ref('aclService')) {
 			objectIdentityRetrievalStrategy = ref('objectIdentityRetrievalStrategy')
 			objectIdentityGenerator = ref('objectIdentityRetrievalStrategy')
@@ -229,7 +226,6 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		}
 
 		expressionHandler(DefaultMethodSecurityExpressionHandler) {
-			parameterNameDiscoverer = ref('parameterNameDiscoverer')
 			permissionCacheOptimizer = ref('aclPermissionCacheOptimizer')
 			expressionParser = ref('expressionParser')
 			roleHierarchy = ref('roleHierarchy')
@@ -487,8 +483,8 @@ class SpringSecurityAclGrailsPlugin extends Plugin {
 		 (ENCODING_ID_MD4): new Md4PasswordEncoder(),
 		 (ENCODING_ID_MD5): messsageDigestPasswordEncoderMD5,
 		 (ENCODING_ID_NOOP): NoOpPasswordEncoder.getInstance(),
-		 (ENCODING_ID_PBKDF2): new Pbkdf2PasswordEncoder(),
-		 (ENCODING_ID_SCRYPT): new SCryptPasswordEncoder(),
+		 (ENCODING_ID_PBKDF2): Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8(),
+		 (ENCODING_ID_SCRYPT): SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8(),
 		 (ENCODING_ID_SHA1): messsageDigestPasswordEncoderSHA1,
 		 (ENCODING_IDSHA256): messsageDigestPasswordEncoderSHA256,
 		 "sha256": new StandardPasswordEncoder()]

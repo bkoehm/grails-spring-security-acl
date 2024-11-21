@@ -1,3 +1,4 @@
+:includedir: src/docs/
 = Spring Security ACL Plugin - Reference Documentation
 Burt Beckwith
 
@@ -8,20 +9,20 @@ Burt Beckwith
 :toclevels: 2
 :numbered:
 
-include::introduction.adoc[]
+include::{includedir}introduction.adoc[]
 
-include::installing.adoc[]
+include::{includedir}installing.adoc[]
 
-include::usage.adoc[]
+include::{includedir}usage.adoc[]
 
-include::tutorial.adoc[]
+include::{includedir}tutorial.adoc[]
 
-include::sampleApp.adoc[]
+include::{includedir}sampleApp.adoc[]
 
-include::AclUtilService.adoc[]
+include::{includedir}AclUtilService.adoc[]
 
-include::Scripts.adoc[]
+include::{includedir}Scripts.adoc[]
 
-include::TagLibraries.adoc[]
+include::{includedir}TagLibraries.adoc[]
 
-include::history.adoc[]
+include::{includedir}history.adoc[]
