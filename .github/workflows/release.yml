@@ -8,18 +8,22 @@ jobs:
       release_version: ${{ steps.release_version.outputs.value }}
     runs-on: ubuntu-latest
     env:
-      GIT_USER_NAME: puneetbehl
-      GIT_USER_EMAIL: behlp@unityfoundation.io
+      GIT_USER_NAME: 'grails-build'
+      GIT_USER_EMAIL: 'grails-build@users.noreply.github.com'
     steps:
-      - name: Checkout repository
+      - name: "📥 Checkout repository"
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
-      - name: Set up JDK
+      - name: "☕️ Setup JDK"
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: liberica
+          java-version: 17
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
       - name: Set the current release version
         id: release_version
         run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
@@ -30,9 +34,7 @@ jobs:
       - name: Run Assemble
         if: success()
         id: assemble
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assemble
+        run: ./gradlew assemble
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
       - name: Upload Distribution
@@ -47,18 +49,17 @@ jobs:
         run: echo $SECRING_FILE | base64 -d > ${{ github.workspace }}/secring.gpg
       - name: Publish to Sonatype OSSRH
         id: publish
-        uses: gradle/gradle-build-action@v2
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_NEXUS_URL: ${{ secrets.SONATYPE_NEXUS_URL }}
-          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          NEXUS_PUBLISH_USERNAME: ${{ secrets.NEXUS_PUBLISH_USERNAME }}
+          NEXUS_PUBLISH_PASSWORD: ${{ secrets.NEXUS_PUBLISH_PASSWORD }}
+          NEXUS_PUBLISH_NEXUS_URL: ${{ secrets.NEXUS_PUBLISH_RELEASE_URL }}
+          NEXUS_PUBLISH_STAGING_PROFILE_ID: ${{ secrets.NEXUS_PUBLISH_STAGING_PROFILE_ID }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SIGNING_PASSPHRASE: ${{ secrets.SIGNING_PASSPHRASE }}
           SECRING_FILE: ${{ secrets.SECRING_FILE }}
-        with:
-          arguments: |
+        run: >
+            ./gradlew
             -Psigning.secretKeyRingFile=${{ github.workspace }}/secring.gpg 
             publishToSonatype 
             closeSonatypeStagingRepository
@@ -68,26 +69,32 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - name: "☕️ Setup JDK"
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: liberica
+          java-version: 17
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
           ref: v${{ needs.publish.outputs.release_version }}
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
       - name: Nexus Staging Close And Release
-        uses: gradle/gradle-build-action@v2
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
-        with:
-          arguments: |
+          NEXUS_PUBLISH_USERNAME: ${{ secrets.NEXUS_PUBLISH_USERNAME }}
+          NEXUS_PUBLISH_PASSWORD: ${{ secrets.NEXUS_PUBLISH_PASSWORD }}
+          NEXUS_PUBLISH_NEXUS_URL: ${{ secrets.NEXUS_PUBLISH_RELEASE_URL }}
+          NEXUS_PUBLISH_STAGING_PROFILE_ID: ${{ secrets.NEXUS_PUBLISH_STAGING_PROFILE_ID }}
+        run: >
             findSonatypeStagingRepository
             releaseSonatypeStagingRepository
       - name: Run post-release
@@ -106,18 +113,20 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'liberica'
           java-version: '17'
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_TOKEN }}
           ref: v${{ needs.publish.outputs.release_version }}
+      - name: "🐘 Setup Gradle"
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
       - name: Build Documentation
         id: docs
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: docs:docs
+        run: ./gradlew docs:docs
       - name: Publish to Github Pages
         if: success()
         uses: grails/github-pages-deploy-action@v2
@@ -126,8 +135,8 @@ jobs:
           TARGET_REPOSITORY: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: build/docs
+          FOLDER: docs/build/docs
           DOC_FOLDER: gh-pages
-          COMMIT_EMAIL: behlp@unityfoundation.io
-          COMMIT_NAME: Puneet Behl
+          COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
+          COMMIT_NAME: ${{ env.GIT_USER_NAME }}
           VERSION: ${{ needs.publish.outputs.release_version }}

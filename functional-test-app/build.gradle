@@ -5,8 +5,6 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "org.grails.plugins:hibernate5:$gormVersion"
-        classpath "com.github.erdi:webdriver-binaries-gradle-plugin:3.2"
     }
 }
 
@@ -17,7 +15,6 @@ apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"war"
 apply plugin:"org.grails.grails-web"
-apply plugin:"com.github.erdi.webdriver-binaries"
 apply plugin:"org.grails.grails-gsp"
 
 repositories {
@@ -52,25 +49,11 @@ dependencies {
     testImplementation "org.grails:grails-gorm-testing-support"
     testImplementation "org.grails:grails-web-testing-support"
     integrationTestImplementation testFixtures('org.grails.plugins:geb')
-
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-    testRuntimeOnly "org.seleniumhq.selenium:selenium-safari-driver:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-remote-driver:$seleniumVersion"
-    testImplementation "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
     implementation project(':spring-security-acl')
 }
 
 tasks.withType(Test) {
     useJUnitPlatform()
-    systemProperty "geb.env", System.getProperty('geb.env')
-    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
-    if (System.getenv('CHROMEWEBDRIVER')) {
-        systemProperty 'webdriver.chrome.driver', "${System.getenv('CHROMEWEBDRIVER')}/chromedriver"
-    }
-    if (System.getenv('GECKOWEBDRIVER')) {
-        systemProperty 'webdriver.gecko.driver', "${System.getenv('GECKOWEBDRIVER')}/geckodriver"
-    }
 
     beforeTest { descriptor -> logger.quiet " -- $descriptor" }
     testLogging {
