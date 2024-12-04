@@ -61,7 +61,7 @@ Once this is done you can use the permission like any other, specifying its quot
 [source,java]
 ----
 @PreAuthorize("hasPermission(#id, 'com.testacl.Report', 'approve')")
-Report get(long id) {
+Report get(@P("id") long id) {
    Report.get id
 }
 ----

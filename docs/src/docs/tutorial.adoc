@@ -26,7 +26,7 @@ and run the `compile` command to resolve the dependencies:
 $ grails compile
 ....
 
-This will transitively install the http://grails.org/plugin/spring-security-core[Spring Security Core] plugin, so you'll need to configure that by running the `s2-quickstart` script:
+This will transitively install the https://github.com/grails/grails-spring-security-core[Spring Security Core] plugin, so you'll need to configure that by running the `s2-quickstart` script:
 
 ....
 $ grails s2-quickstart com.testacl User Role
@@ -76,6 +76,7 @@ import org.springframework.security.acls.model.AccessControlEntry
 import org.springframework.security.acls.model.MutableAcl
 import org.springframework.security.acls.model.Permission
 import org.springframework.security.acls.model.Sid
+import org.springframework.security.core.parameters.P
 
 import grails.compiler.GrailsCompileStatic
 import grails.plugin.springsecurity.SpringSecurityService
@@ -97,7 +98,7 @@ class ReportService {
 
    @PreAuthorize('hasPermission(#report, admin)')
    @Transactional
-   void addPermission(Report report, String username, Permission permission) {
+   void addPermission(@P("report") Report report, String username, Permission permission) {
       aclUtilService.addPermission report, username, permission
    }
 
@@ -113,7 +114,7 @@ class ReportService {
    }
 
    @PreAuthorize('hasPermission(#id, "com.testacl.Report", read) or hasPermission(#id, "com.testacl.Report", admin)')
-   Report get(long id) {
+   Report get(@P("id") long id) {
       Report.get id
    }
 
@@ -129,13 +130,13 @@ class ReportService {
 
    @Transactional
    @PreAuthorize('hasPermission(#report, write) or hasPermission(#report, admin)')
-   void update(Report report, String name) {
+   void update(@P("report") Report report, String name) {
       report.name = name
    }
 
    @Transactional
    @PreAuthorize('hasPermission(#report, delete) or hasPermission(#report, admin)')
-   void delete(Report report) {
+   void delete(@P("report") Report report) {
       report.delete()
 
       // Delete the ACL information as well
@@ -144,7 +145,7 @@ class ReportService {
 
    @Transactional
    @PreAuthorize('hasPermission(#report, admin)')
-   void deletePermission(Report report, Sid recipient, Permission permission) {
+   void deletePermission(@P("report") Report report, Sid recipient, Permission permission) {
       MutableAcl acl = (MutableAcl)aclUtilService.readAcl(report)
 
       // Remove all permissions associated with this particular
