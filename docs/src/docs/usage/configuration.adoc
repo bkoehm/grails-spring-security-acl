@@ -13,7 +13,7 @@ Creating, editing, or deleting permissions requires an authenticated user. In mo
 
 You can leave the attributes set to `ROLE_ADMIN` or change them to have separate values, e.g.
 
-[source,java]
+[source,groovy]
 ----
 grails.plugin.springsecurity.acl.authority.
         modifyAuditingDetails = 'ROLE_ACL_MODIFY_AUDITING'
@@ -38,7 +38,7 @@ There are also two options to configure https://docs.spring.io/spring-security/r
 
 Example:
 
-[source,java]
+[source,groovy]
 ----
 grails.plugin.springsecurity.useRunAs = true
 grails.plugin.springsecurity.runAs.key = 'your run-as key'

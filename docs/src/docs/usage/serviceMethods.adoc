@@ -14,7 +14,7 @@ The annotations use security-specific Spring expression language (SpEL) expressi
 
 Here's an example service that manages a `Report` domain class and uses these annotations and expressions:
 
-[source,java]
+[source,groovy]
 ----
 import org.springframework.security.access.prepost.PostFilter
 import org.springframework.security.access.prepost.PreAuthorize

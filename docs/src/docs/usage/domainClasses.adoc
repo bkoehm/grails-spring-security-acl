@@ -35,7 +35,7 @@ include::../code/grails-app/domain/grails/plugin/springsecurity/acl/AclObjectIde
 
 `AclObjectIdentity` actually extends a base class, `AbstractAclObjectIdentity`:
 
-[source,java]
+[source,groovy]
 ----
 abstract class AbstractAclObjectIdentity {
 
