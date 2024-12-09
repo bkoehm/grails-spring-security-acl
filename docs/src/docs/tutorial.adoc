@@ -15,7 +15,7 @@ Add a dependency for the plugin by adding it to the `dependencies` block in buil
 ----
 dependencies {
    ...
-   compile 'org.grails.plugins:spring-security-acl:{project-version}'
+   implementation 'org.grails.plugins:spring-security-acl:{project-version}'
    ...
 }
 ----
@@ -570,7 +570,7 @@ and open http://localhost:8080/report.
 
 [NOTE]
 ====
-If you see the error `NoSuchMethodError: org.springframework.cache.ehcache.EhCacheFactoryBean.setMaxEntriesLocalHeap(J)V` when starting the app, comment out the `compile 'org.hibernate:hibernate-ehcache'` dependency and disable the second-level cache in `application.yml` with `use_second_level_cache: false`, and restart.
+If you see the error `NoSuchMethodError: org.springframework.cache.ehcache.EhCacheFactoryBean.setMaxEntriesLocalHeap(J)V` when starting the app, comment out the `implementation 'org.hibernate:hibernate-ehcache'` dependency and disable the second-level cache in `application.yml` with `use_second_level_cache: false`, and restart.
 ====
 
 Login as user1/password1 and you should see the first page of results. But if you click on page 7 or higher, you'll see that you can only see a subset of the ``Report``s. This illustrates one issue with using ACLs to restrict view access to instances; you would have to add joins in your query to the ACL database tables to get an accurate count of the total number of visible instances.
